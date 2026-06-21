@@ -23,7 +23,7 @@ A request to `GET /suggest` first checks the **distributed cache** (the owning n
 consistent hashing). On a miss it computes suggestions from an in‑memory **trie** (a prefix index over
 the durable counts) and caches the result. `POST /search` does not write to the database directly — it
 appends to an in‑memory **buffer**; a scheduled **batch writer** aggregates and flushes those counts to
-**H2**. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full diagram.
+**H2**. See project report for the full diagram.
 
 ```
 React UI  →  Spring Boot API  →  Distributed cache (consistent hashing)
@@ -68,11 +68,11 @@ npm run dev
 | `GET /trending` | Currently trending queries |
 | `GET /stats` | Cache hit rate, DB read/write counts, latency percentiles |
 
-Full reference: [docs/API.md](docs/API.md).
+Full reference: project report.
 
 ## Documentation
-- [Design & rationale](docs/DESIGN_AND_RATIONALE.md) — every design choice, trade‑offs, and Q&A
-- [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md) · [Performance report](docs/PERFORMANCE_REPORT.md)
+- Design & rationale — every design choice, trade‑offs, and Q&A
+- Architecture · API · Performance report(refer all this in project report).
 
 Configuration knobs (cache nodes, TTLs, batch size, recency weight, dataset size) live in
 `backend/src/main/resources/application.yml`.
