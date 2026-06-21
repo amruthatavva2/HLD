@@ -1,0 +1,52 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: search-typeahead
+  datasource:
+    # File-based H2 => query counts survive restarts (durable "primary store").
+    # AUTO_SERVER lets the H2 console attach while the app holds the DB.
+    url: jdbc:h2:file:./data/typeahead;AUTO_SERVER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 1000
+  h2:
+    console:
+      enabled: true        # browse data at http://localhost:8080/h2-console
+
+logging:
+  level:
+    com.typeahead: INFO
+
+# ---- Application tuning (see com.typeahead.config.AppProperties) ----
+typeahead:
+  suggest:
+    max-results: 10        # API returns at most this many suggestions
+    candidates-per-node: 50 # how many top-by-count queries each trie node keeps
+  cache:
+    nodes: 3               # number of logical (distributed) cache nodes
+    vnodes-per-node: 150   # virtual nodes per physical node on the hash ring
+    ttl-basic-ms: 60000    # cache TTL for the basic (count) ranking
+    ttl-recency-ms: 5000   # shorter TTL for recency ranking (rankings change fast)
+  batch:
+    size: 500              # flush when this many DISTINCT queries are buffered
+    flush-interval-ms: 2000 # ...or at least this often
+  trending:
+    window-minutes: 10     # sliding window length
+    bucket-seconds: 60     # size of each time bucket
+    top-k: 10              # trending list size / recency candidate pool size
+  ranking:
+    recency-weight: 0.7    # beta: weight of the recency component in the blended score
+  dataset:
+    path: ./data/queries.csv
+    size: 120000           # distinct queries to generate (>= 100k requirement)
+    seed: 42               # fixed seed => reproducible dataset
